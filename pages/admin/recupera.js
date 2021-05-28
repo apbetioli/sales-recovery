@@ -217,16 +217,20 @@ export default function Recupera(props) {
                                     return <TableRow key={transaction._id}></TableRow>
 
 
-                                const intro = `Oi ${transaction.first_name}. Eu sou Alexandre da equipe da Mari Ubialli. Agradecemos o interesse no *${transaction.prod_name}*.`;
+                                const intro = `Oi ${transaction.first_name}. %0aEu sou Alexandre da equipe da Mari Ubialli. %0aAgradecemos o interesse no *${transaction.prod_name}*. `;
                                 const dayOfWeek = new Date().getDay();
                                 const due = (dayOfWeek >= 5 || dayOfWeek == 0) ? "segunda-feira" : "amanhã"
 
-                                const phase4Text = `${intro} Lembrando que seu boleto vence ${due}. Qualquer dúvida estou à sua disposição.`;
+                                let phase4Text = `${intro} %0aLembrando que seu boleto vence ${due}. `;
+                                if (dayOfWeek == 5) {
+                                    phase4Text += '%0aFaça o pagamento do boleto ainda hoje para aproveitar o fim de semana e iniciar já o seu curso! :)'
+                                }
+                                phase4Text += '%0aQualquer dúvida estou à sua disposição.'
 
                                 const phase1PaymentTypeText = transaction.payment_type == "PIX" ? `/pixajuda` : `/cartaoajuda`;
-                                const phase1Text = transaction.payment_type == "billet" ? `Bom dia ${transaction.first_name}. /boletohoje` : `${intro} ${phase1PaymentTypeText}`;
+                                const phase1Text = transaction.payment_type == "billet" ? `Bom dia ${transaction.first_name}. %0a/boletohoje` : `${intro} ${phase1PaymentTypeText}`;
 
-                                const phase2Text = `Bom dia ${transaction.first_name}. ` + (transaction.payment_type == "PIX" ? "/pixexpirou" : "/boletoexpirou");
+                                const phase2Text = `Bom dia ${transaction.first_name}. %0a` + (transaction.payment_type == "PIX" ? "/pixexpirou" : "/boletoexpirou");
 
                                 const checkoutId = transaction.prod_name == "Curso Bonecas Joias Raras" ? "B46628840G" : "D49033705A"
                                 const checkoutUrl = `https://pay.hotmart.com/${checkoutId}?checkoutMode=10&email=${transaction.email}&name=${transaction.name}&doc=${transaction.doc}&phonenumber=${transaction.phone_checkout_number}&phoneac=${transaction.phone_checkout_local_code}`
