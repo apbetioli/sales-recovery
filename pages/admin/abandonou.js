@@ -139,6 +139,7 @@ export default function Abandonou(props) {
                                 <TableCell>Obs</TableCell>
                                 <TableCell>Nome</TableCell>
                                 <TableCell>Email</TableCell>
+                                <TableCell>Verificar</TableCell>
                                 <TableCell>Whats</TableCell>
                                 <TableCell>Checkout</TableCell>
                             </TableRow>
@@ -147,9 +148,13 @@ export default function Abandonou(props) {
                             {props.abandoned.map((transaction) => {
 
                                 const firstName = transaction.buyerVO.name.split(' ')[0];
-                                const text = `Oi ${firstName}. %0aEu sou Alexandre da equipe da Mari Ubialli. %0aAgradecemos o interesse no *${transaction.productName}*. %0aNão recebemos a confirmação da sua compra, por isso estou entrando em contato para te ajudar caso tenha alguma dúvida.`;
+                                const text = `Oi ${firstName}. %0aEu sou Alexandre da equipe da Mari Ubialli. %0aAgradecemos o interesse no *${transaction.productName}*. /abandonou`;
                                 const checkoutId = transaction.productName == "Curso Bonecas Joias Raras" ? "B46628840G" : "D49033705A";
                                 const checkoutUrl = `https://pay.hotmart.com/${checkoutId}?checkoutMode=10&email=${transaction.buyerVO.email}&name=${transaction.buyerVO.name}`;
+                                const hoje = new Date().getTime()
+                                let begin = new Date()
+                                begin.setDate(new Date().getDate()-7)
+                                begin = begin.getTime();
 
                                 return (
                                     <TableRow key={transaction._id}>
@@ -158,6 +163,7 @@ export default function Abandonou(props) {
                                         <TableCell><span onClick={() => handleClickOpen(transaction)}>{transaction.obs || '...'}</span></TableCell>
                                         <TableCell>{transaction.buyerVO.name}</TableCell>
                                         <TableCell>{transaction.buyerVO.email}</TableCell>
+                                        <TableCell><a href={`https://app-vlc.hotmart.com/sales?endDate=${hoje}&startDate=${begin}&email=${transaction.buyerVO.email}&transactionStatus%5B0%5D=WAITING_PAYMENT&transactionStatus%5B1%5D=APPROVED&transactionStatus%5B2%5D=PRINTED_BILLET&transactionStatus%5B3%5D=CANCELLED&transactionStatus%5B4%5D=CHARGEBACK&transactionStatus%5B5%5D=COMPLETE&transactionStatus%5B6%5D=UNDER_ANALISYS&transactionStatus%5B7%5D=EXPIRED&transactionStatus%5B8%5D=STARTED&transactionStatus%5B9%5D=PROTESTED&transactionStatus%5B10%5D=REFUNDED&transactionStatus%5B11%5D=OVERDUE`} target="_blank">Verificar</a></TableCell>
                                         <TableCell>
                                             {transaction.buyerVO.phone &&
                                                 <a href={`http://wa.me/55${transaction.buyerVO.phone}?text=${text}`} target="_blank">Whats</a>

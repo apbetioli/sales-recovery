@@ -204,6 +204,7 @@ export default function Recupera(props) {
                                 <TableCell>Celular checkout</TableCell>
                                 <TableCell>Fase</TableCell>
                                 <TableCell>Mensagem</TableCell>
+                                <TableCell>Hotmart</TableCell>
                                 <TableCell>Checkout</TableCell>
                                 <TableCell>Boleto</TableCell>
                                 <TableCell>Arquivar</TableCell>
@@ -217,7 +218,7 @@ export default function Recupera(props) {
                                     return <TableRow key={transaction._id}></TableRow>
 
 
-                                const intro = `Oi ${transaction.first_name}. %0aEu sou Alexandre da equipe da Mari Ubialli. %0aAgradecemos o interesse no *${transaction.prod_name}*. `;
+                                const intro = `Oi ${transaction.first_name}. Bom dia! %0aEu sou Alexandre da equipe da Mari Ubialli. %0aAgradecemos o interesse no *${transaction.prod_name}*. `;
                                 const dayOfWeek = new Date().getDay();
                                 const due = (dayOfWeek >= 5 || dayOfWeek == 0) ? "segunda-feira" : "amanhã"
 
@@ -226,6 +227,12 @@ export default function Recupera(props) {
                                     phase4Text += '%0aFaça o pagamento do boleto ainda hoje para aproveitar o fim de semana e iniciar já o seu curso! :)'
                                 }
                                 phase4Text += '%0aQualquer dúvida estou à sua disposição.'
+
+                                const hoje = new Date().getTime()
+                                let begin = new Date()
+                                begin.setDate(new Date().getDate()-7)
+                                begin = begin.getTime();
+
 
                                 const phase1PaymentTypeText = transaction.payment_type == "PIX" ? `/pixajuda` : `/cartaoajuda`;
                                 const phase1Text = transaction.payment_type == "billet" ? `Bom dia ${transaction.first_name}. %0a/boletohoje` : `${intro} ${phase1PaymentTypeText}`;
@@ -295,6 +302,7 @@ export default function Recupera(props) {
                                                     WhatsApp
                                                 </a>
                                             </TableCell>
+                                            <TableCell><a href={`https://app-vlc.hotmart.com/sales?endDate=${hoje}&startDate=${begin}&email=${transaction.email}&transactionStatus%5B0%5D=WAITING_PAYMENT&transactionStatus%5B1%5D=APPROVED&transactionStatus%5B2%5D=PRINTED_BILLET&transactionStatus%5B3%5D=CANCELLED&transactionStatus%5B4%5D=CHARGEBACK&transactionStatus%5B5%5D=COMPLETE&transactionStatus%5B6%5D=UNDER_ANALISYS&transactionStatus%5B7%5D=EXPIRED&transactionStatus%5B8%5D=STARTED&transactionStatus%5B9%5D=PROTESTED&transactionStatus%5B10%5D=REFUNDED&transactionStatus%5B11%5D=OVERDUE`} target="_blank">Hotmart</a></TableCell>
                                             <TableCell><a href={checkoutUrl} target="_blank">Checkout</a></TableCell>
                                             <TableCell>{transaction.billet_url && <a href={transaction.billet_url} target="_blank">Boleto</a>}</TableCell>
                                             <TableCell><Checkbox checked={transaction.archived} onChange={(e) => { e.preventDefault(); handleArchive(transaction) }} /></TableCell>
