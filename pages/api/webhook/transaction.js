@@ -20,7 +20,8 @@ module.exports = async (req, res) => {
 
       if (!t || t.status != "approved" || ["completed", "refunded", "chargeback", "dispute"].includes(data.status)) {
 
-        data.archived = t.archived;
+        if (data.archived === undefined)
+          data.archived = (t && t.archived) | false;
 
         const doc = { $set: data }
         const options = { upsert: true };
