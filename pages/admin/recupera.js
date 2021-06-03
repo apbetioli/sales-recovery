@@ -22,7 +22,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import CloseIcon from '@material-ui/icons/Close'
 import Head from "next/head"
-import React from "react"
+import React, { useEffect } from "react"
 import ColorButton from "../../components/ColorButton"
 
 const API_URL = `${process.env.NEXT_PUBLIC_DOMAIN}/api/webhook/transaction`
@@ -228,11 +228,12 @@ export default function Recupera(props) {
                                 }
                                 phase4Text += '%0aQualquer dúvida estou à sua disposição.'
 
-                                const hoje = new Date().getTime()
-                                let begin = new Date()
-                                begin.setDate(new Date().getDate()-7)
-                                begin = begin.getTime();
+                                const hoje = new Date(new Date().toDateString())
+                                const end = hoje.getTime()
 
+                                let start = hoje
+                                start.setDate(hoje.getDate() - 7)
+                                start = start.getTime();
 
                                 const phase1PaymentTypeText = transaction.payment_type == "PIX" ? `/pixajuda` : `/cartaoajuda`;
                                 const phase1Text = transaction.payment_type == "billet" ? `Bom dia ${transaction.first_name}. %0a/boletohoje` : `${intro} ${phase1PaymentTypeText}`;
@@ -247,29 +248,27 @@ export default function Recupera(props) {
                                 const whatsLink = `http://wa.me/55${transaction.phone_checkout_local_code}${transaction.phone_checkout_number}`;
 
                                 let rowStyle = classes.normal;
-                                switch (transaction.phase || -1) {
+                                let currentPhaseText = "";
+                                let currentPhaseLabel = "";
+
+                                switch (transaction.phase) {
                                     case 1: rowStyle = classes.phase1; break;
                                     case 2: rowStyle = classes.phase2; break;
                                     case 3: rowStyle = classes.phase3; break;
                                     case 4: rowStyle = classes.phase4; break;
                                 }
-
-                                let currentPhaseText = "";
-                                switch (transaction.phase || -1) {
+                                switch (transaction.phase) {
                                     case 1: currentPhaseText = phase1Text; break;
                                     case 2: currentPhaseText = phase2Text; break;
                                     case 3: currentPhaseText = phase3Text; break;
                                     case 4: currentPhaseText = phase4Text; break;
                                 }
-
-                                let currentPhaseLabel = "";
-                                switch (transaction.phase || -1) {
+                                switch (transaction.phase) {
                                     case 1: currentPhaseLabel = transaction.payment_type == "PIX" ? "Aguardando PIX" : "Boleto vence hoje"; break;
                                     case 2: currentPhaseLabel = "Expirou"; break;
                                     case 3: currentPhaseLabel = "Feedback"; break;
                                     case 4: currentPhaseLabel = "Boletou"; break;
                                 }
-
 
                                 if (["expired", "waiting_payment", "canceled", "billet_printed"].includes(transaction.status)) {
                                     return (
@@ -302,7 +301,7 @@ export default function Recupera(props) {
                                                     WhatsApp
                                                 </a>
                                             </TableCell>
-                                            <TableCell><a href={`https://app-vlc.hotmart.com/sales?endDate=${hoje}&startDate=${begin}&email=${transaction.email}&transactionStatus%5B0%5D=WAITING_PAYMENT&transactionStatus%5B1%5D=APPROVED&transactionStatus%5B2%5D=PRINTED_BILLET&transactionStatus%5B3%5D=CANCELLED&transactionStatus%5B4%5D=CHARGEBACK&transactionStatus%5B5%5D=COMPLETE&transactionStatus%5B6%5D=UNDER_ANALISYS&transactionStatus%5B7%5D=EXPIRED&transactionStatus%5B8%5D=STARTED&transactionStatus%5B9%5D=PROTESTED&transactionStatus%5B10%5D=REFUNDED&transactionStatus%5B11%5D=OVERDUE`} target="_blank">Hotmart</a></TableCell>
+                                            <TableCell><a href={`https://app-vlc.hotmart.com/sales?endDate=${end}&startDate=${start}&email=${transaction.email}&transactionStatus%5B0%5D=WAITING_PAYMENT&transactionStatus%5B1%5D=APPROVED&transactionStatus%5B2%5D=PRINTED_BILLET&transactionStatus%5B3%5D=CANCELLED&transactionStatus%5B4%5D=CHARGEBACK&transactionStatus%5B5%5D=COMPLETE&transactionStatus%5B6%5D=UNDER_ANALISYS&transactionStatus%5B7%5D=EXPIRED&transactionStatus%5B8%5D=STARTED&transactionStatus%5B9%5D=PROTESTED&transactionStatus%5B10%5D=REFUNDED&transactionStatus%5B11%5D=OVERDUE`} target="_blank">Hotmart</a></TableCell>
                                             <TableCell><a href={checkoutUrl} target="_blank">Checkout</a></TableCell>
                                             <TableCell>{transaction.billet_url && <a href={transaction.billet_url} target="_blank">Boleto</a>}</TableCell>
                                             <TableCell><Checkbox checked={transaction.archived} onChange={(e) => { e.preventDefault(); handleArchive(transaction) }} /></TableCell>
