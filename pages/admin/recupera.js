@@ -235,10 +235,10 @@ export default function Recupera(props) {
                                 start.setDate(hoje.getDate() - 7)
                                 start = start.getTime();
 
-                                const phase1PaymentTypeText = transaction.payment_type == "PIX" ? `/pixajuda` : `/cartaoajuda`;
-                                const phase1Text = transaction.payment_type == "billet" ? `${transaction.first_name}. %0a/boletohoje` : `${intro} ${phase1PaymentTypeText}`;
+                                const phase1PaymentTypeText = transaction.payment_type == "PIX" ? `/pixajuda` : ( transaction.payment_type == "billet" ? `/boletohoje` : `/cartaoajuda`);
+                                const phase1Text = `${intro}%0a${phase1PaymentTypeText}`;
 
-                                const phase2Text = `${transaction.first_name}. Tudo bem?. %0a` + (transaction.payment_type == "PIX" ? "/pixexpirou" : (transaction.payment_type == "billet" ? "/boletoexpirou": "/cartaoajuda"));
+                                const phase2Text = `Oi ${transaction.first_name}. Tudo bem? %0a` + (transaction.payment_type == "PIX" ? "/pixexpirou" : (transaction.payment_type == "billet" ? "/boletoexpirou": "/cartaoajuda"));
 
                                 const checkoutId = transaction.prod_name == "Curso Bonecas Joias Raras" ? "B46628840G" : "D49033705A"
                                 const checkoutUrl = `https://pay.hotmart.com/${checkoutId}?checkoutMode=10&email=${transaction.email}&name=${transaction.name}&doc=${transaction.doc}&phonenumber=${transaction.phone_checkout_number}&phoneac=${transaction.phone_checkout_local_code}`
