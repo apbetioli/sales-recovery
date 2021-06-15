@@ -218,7 +218,7 @@ export default function Recupera(props) {
                                     return <TableRow key={transaction._id}></TableRow>
 
 
-                                const intro = `Oi ${transaction.first_name}. Tudo bem? %0aEu sou Alexandre da equipe da Mari Ubialli. %0aAgradecemos o interesse no *${transaction.prod_name}*. `;
+                                const intro = `Oi ${transaction.first_name}. Tudo bem? %0aEu sou Alexandre da equipe da Mari Ubialli. %0aNós ficamos muito felizes que tenha se interessado pelo *${transaction.prod_name}*. `;
                                 const dayOfWeek = new Date().getDay();
                                 const due = (dayOfWeek >= 5 || dayOfWeek == 0) ? "segunda-feira" : "amanhã"
 
@@ -226,7 +226,7 @@ export default function Recupera(props) {
                                 if (dayOfWeek == 5) {
                                     phase4Text += '%0aFaça o pagamento do boleto ainda hoje para aproveitar o fim de semana e iniciar já o seu curso! :)'
                                 }
-                                phase4Text += '%0aQualquer dúvida estou à sua disposição.'
+                                phase4Text += '%0aQualquer dúvida estou aqui para ajudar'
 
                                 const hoje = new Date(new Date().toDateString())
                                 const end = hoje.getTime()
