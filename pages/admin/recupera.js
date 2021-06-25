@@ -222,11 +222,11 @@ export default function Recupera(props) {
                                 const dayOfWeek = new Date().getDay();
                                 const due = (dayOfWeek >= 5 || dayOfWeek == 0) ? "segunda-feira" : "amanhã"
 
-                                let phase4Text = `${intro} %0aLembrando que seu boleto vence ${due}. `;
+                                let phase4Text = `${intro}`;
                                 if (dayOfWeek == 5) {
-                                    phase4Text += '%0aFaça o pagamento do boleto ainda hoje para aproveitar o fim de semana e iniciar já o seu curso! :)'
+                                    phase4Text += '%0aFaça o pagamento do boleto ainda hoje para aproveitar o fim de semana e iniciar já o seu curso!'
                                 }
-                                phase4Text += '%0aQualquer dúvida estou aqui para ajudar'
+                                phase4Text += '%0aQualquer dúvida pode contar comigo :)'
 
                                 const hoje = new Date(new Date().toDateString())
                                 const end = hoje.getTime()
@@ -243,7 +243,7 @@ export default function Recupera(props) {
                                 const checkoutId = transaction.prod_name == "Curso Bonecas Joias Raras" ? "B46628840G" : "D49033705A"
                                 const checkoutUrl = `https://pay.hotmart.com/${checkoutId}?checkoutMode=10&email=${transaction.email}&name=${transaction.name}&doc=${transaction.doc}&phonenumber=${transaction.phone_checkout_number}&phoneac=${transaction.phone_checkout_local_code}`
 
-                                const phase3Text = `Oi ${transaction.first_name}. Entendo que você deve ter desistido da compra do *${transaction.prod_name}* e não tem problema, mas poderia compartilhar o motivo? A sua resposta é muito importante e irá ajudar a melhorarmos o suporte e a oferta dos nossos cursos. Obrigado desde já.`
+                                const phase3Text = `${intro} %0a/abandonou`
 
                                 const whatsLink = `http://wa.me/55${transaction.phone_checkout_local_code}${transaction.phone_checkout_number}`;
 
@@ -266,7 +266,7 @@ export default function Recupera(props) {
                                 switch (transaction.phase) {
                                     case 1: currentPhaseLabel = transaction.payment_type == "PIX" ? "Aguardando PIX" : (transaction.payment_type == "billet" ? "Boleto vence hoje" : "Cartão cancelado"); break;
                                     case 2: currentPhaseLabel = "Expirou"; break;
-                                    case 3: currentPhaseLabel = "Feedback"; break;
+                                    case 3: currentPhaseLabel = "Abandonou"; break;
                                     case 4: currentPhaseLabel = "Boletou"; break;
                                 }
 
@@ -293,7 +293,7 @@ export default function Recupera(props) {
                                                     <MenuItem value={4}>Boletou</MenuItem>
                                                     <MenuItem value={1}>{transaction.payment_type == "PIX" ? "Aguardando PIX" : (transaction.payment_type == "billet" ? "Boleto vence hoje" : "Cartão cancelado")}</MenuItem>
                                                     <MenuItem value={2}>Expirou</MenuItem>
-                                                    <MenuItem value={3}>Feedback</MenuItem>
+                                                    <MenuItem value={3}>Abandonou</MenuItem>
                                                 </Select>
                                             </TableCell>
                                             <TableCell>
