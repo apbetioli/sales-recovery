@@ -107,24 +107,37 @@ export default function Recupera(props) {
         console.log(res)
     }
 
+    const removeFromList = (transaction) => {
+        setTransactions(transactions.filter(item => item !== transaction))
+    }
+
     const handleArchive = async (transaction) => {
         transaction.archived = !transaction.archived
-        setSelected(transaction)
 
         const res = await post(transaction)
         console.log(res)
 
-        setTransactions(await list())
+        removeFromList(transaction)
     }
+
+    
+    const handleApprove = async (transaction) => {
+        transaction.status = "approved"
+        transaction.cms_vendor = transaction.price
+
+        const res = await post(transaction)
+        console.log(res)
+        
+        removeFromList(transaction)
+    }    
 
     const handleDelete = async (transaction) => {
         if (window.confirm("Tem certeza que quer deletar?")) {
-            setSelected(transaction)
 
             const res = await post(transaction, 'DELETE')
             console.log(res)
 
-            setTransactions(await list())
+            removeFromList(transaction)
         }
     }
 
@@ -132,12 +145,11 @@ export default function Recupera(props) {
 
         if (transaction.phase != newValue) {
             transaction.phase = newValue
-            setSelected(transaction)
 
             const res = await post(transaction)
             console.log(res)
 
-            setTransactions(await list())
+            setTransactions(transactions.map(item => item._id === transaction._id ? transaction : item));
         }
     }
 
@@ -208,6 +220,7 @@ export default function Recupera(props) {
                                 <TableCell>Checkout</TableCell>
                                 <TableCell>Boleto</TableCell>
                                 <TableCell>Arquivar</TableCell>
+                                <TableCell>Aprovar</TableCell>
                                 <TableCell>Excluir</TableCell>
                             </TableRow>
                         </TableHead>
@@ -217,16 +230,8 @@ export default function Recupera(props) {
                                 if (transaction.archived && !showArchived)
                                     return <TableRow key={transaction._id}></TableRow>
 
-
-                                const intro = `Oi ${transaction.first_name}. Tudo bem? %0aEu sou Alexandre da equipe da Mari Ubialli. %0aNós ficamos muito felizes que tenha se interessado pelo *${transaction.prod_name}*. `;
-                                const dayOfWeek = new Date().getDay();
-                                const due = (dayOfWeek >= 5 || dayOfWeek == 0) ? "segunda-feira" : "amanhã"
-
-                                let phase4Text = `${intro}`;
-                                if (dayOfWeek == 5) {
-                                    phase4Text += '%0aFaça o pagamento do boleto ainda hoje para aproveitar o fim de semana e iniciar já o seu curso!'
-                                }
-                                phase4Text += '%0aQualquer dúvida pode contar comigo :)'
+                                const oi = `Oi ${transaction.first_name}. Tudo bem? %0aAqui é o Alexandre. `;
+                                const intro = `${oi}Sou da equipe da Mari Ubialli. %0aNós ficamos muito felizes que tenha se interessado pelo *${transaction.prod_name}*. `;
 
                                 const hoje = new Date(new Date().toDateString())
                                 const end = hoje.getTime()
@@ -236,14 +241,10 @@ export default function Recupera(props) {
                                 start = start.getTime();
 
                                 const phase1PaymentTypeText = transaction.payment_type == "PIX" ? `/pixajuda` : ( transaction.payment_type == "billet" ? `/boletohoje` : `/cartaoajuda`);
-                                const phase1Text = `${intro}%0a${phase1PaymentTypeText}`;
-
-                                const phase2Text = `Oi ${transaction.first_name}. Tudo bem? %0a` + (transaction.payment_type == "PIX" ? "/pixexpirou" : (transaction.payment_type == "billet" ? "/boletoexpirou": "/cartaoajuda"));
+                                const phase2PaymentTypeText = transaction.payment_type == "PIX" ? "/pixexpirou" : (transaction.payment_type == "billet" ? "/boletoexpirou": "/cartaoajuda");
 
                                 const checkoutId = transaction.prod_name == "Curso Bonecas Joias Raras" ? "B46628840G" : "D49033705A"
                                 const checkoutUrl = `https://pay.hotmart.com/${checkoutId}?checkoutMode=10&email=${transaction.email}&name=${transaction.name}&doc=${transaction.doc}&phonenumber=${transaction.phone_checkout_number}&phoneac=${transaction.phone_checkout_local_code}`
-
-                                const phase3Text = `${intro} %0a/abandonou`
 
                                 const whatsLink = `http://wa.me/55${transaction.phone_checkout_local_code}${transaction.phone_checkout_number}`;
 
@@ -252,22 +253,30 @@ export default function Recupera(props) {
                                 let currentPhaseLabel = "";
 
                                 switch (transaction.phase) {
-                                    case 1: rowStyle = classes.phase1; break;
-                                    case 2: rowStyle = classes.phase2; break;
-                                    case 3: rowStyle = classes.phase3; break;
-                                    case 4: rowStyle = classes.phase4; break;
-                                }
-                                switch (transaction.phase) {
-                                    case 1: currentPhaseText = phase1Text; break;
-                                    case 2: currentPhaseText = phase2Text; break;
-                                    case 3: currentPhaseText = phase3Text; break;
-                                    case 4: currentPhaseText = phase4Text; break;
-                                }
-                                switch (transaction.phase) {
-                                    case 1: currentPhaseLabel = transaction.payment_type == "PIX" ? "Aguardando PIX" : (transaction.payment_type == "billet" ? "Boleto vence hoje" : "Cartão cancelado"); break;
-                                    case 2: currentPhaseLabel = "Expirou"; break;
-                                    case 3: currentPhaseLabel = "Abandonou"; break;
-                                    case 4: currentPhaseLabel = "Boletou"; break;
+                                    case 1: {
+                                        rowStyle = classes.phase1;
+                                        currentPhaseText = `${intro}%0a${phase1PaymentTypeText}`; 
+                                        currentPhaseLabel = transaction.payment_type == "PIX" ? "Aguardando PIX" : (transaction.payment_type == "billet" ? "Boleto vence hoje" : "Cartão cancelado");
+                                        break;
+                                    };
+                                    case 2: {
+                                        rowStyle = classes.phase2;
+                                        currentPhaseText = `${oi}%0a${phase2PaymentTypeText}`;
+                                        currentPhaseLabel = "Expirou"; 
+                                        break;
+                                    }                                    
+                                    case 3: {
+                                        rowStyle = classes.phase3;
+                                        currentPhaseText = `${intro}%0a/abandonou`; 
+                                        currentPhaseLabel = "Abandonou";
+                                        break;
+                                    }
+                                    case 4: {
+                                        rowStyle = classes.phase4;
+                                        currentPhaseText = `${intro}%0aQualquer dúvida pode contar comigo :)`; 
+                                        currentPhaseLabel = "Apresentação";
+                                        break;
+                                    }
                                 }
 
                                 if (["expired", "waiting_payment", "canceled", "billet_printed"].includes(transaction.status)) {
@@ -304,7 +313,8 @@ export default function Recupera(props) {
                                             <TableCell><a href={`https://app-vlc.hotmart.com/sales?endDate=${end}&startDate=${start}&email=${transaction.email}&transactionStatus%5B0%5D=WAITING_PAYMENT&transactionStatus%5B1%5D=APPROVED&transactionStatus%5B2%5D=PRINTED_BILLET&transactionStatus%5B3%5D=CANCELLED&transactionStatus%5B4%5D=CHARGEBACK&transactionStatus%5B5%5D=COMPLETE&transactionStatus%5B6%5D=UNDER_ANALISYS&transactionStatus%5B7%5D=EXPIRED&transactionStatus%5B8%5D=STARTED&transactionStatus%5B9%5D=PROTESTED&transactionStatus%5B10%5D=REFUNDED&transactionStatus%5B11%5D=OVERDUE`} target="_blank">Hotmart</a></TableCell>
                                             <TableCell><a href={checkoutUrl} target="_blank">Checkout</a></TableCell>
                                             <TableCell>{transaction.billet_url && <a href={transaction.billet_url} target="_blank">Boleto</a>}</TableCell>
-                                            <TableCell><Checkbox checked={transaction.archived} onChange={(e) => { e.preventDefault(); handleArchive(transaction) }} /></TableCell>
+                                            <TableCell><Checkbox checked={transaction.archived || false} onChange={(e) => { e.preventDefault(); handleArchive(transaction) }} /></TableCell>
+                                            <TableCell><a href="#" onClick={(e) => { e.preventDefault(); handleApprove(transaction) }}>Aprovar</a></TableCell>
                                             <TableCell><a href="#" onClick={(e) => { e.preventDefault(); handleDelete(transaction) }}>Excluir</a></TableCell>
                                         </TableRow>
                                     )
