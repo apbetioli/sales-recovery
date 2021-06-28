@@ -5,15 +5,12 @@ module.exports = async (req, res) => {
     const db = await client.connect();
     const abandoned = await db.db(process.env.MONGO_DB).collection("abandoned");
     const data = req.body;
-    const query = { "buyerVO.email": data.email };
 
     if (req.method == "POST") {
-
       if (!data.date)
         data.date = new Date().toISOString();
 
-      delete data._id;
-
+      const query = { "buyerVO.email": data.buyerVO.email };
       const doc = { $set: data }
       const options = { upsert: true };
       const upserted = await abandoned.updateOne(query, doc, options);
@@ -23,9 +20,8 @@ module.exports = async (req, res) => {
     } else if (req.method == "DELETE") {
 
       const query = { "buyerVO.email": data.buyerVO.email };
-      console.log(query)
-
       const deleted = await abandoned.deleteMany(query);
+
       console.log(deleted)
       res.send(deleted)
 

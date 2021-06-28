@@ -6,12 +6,11 @@ module.exports = async (req, res) => {
     const transactions = await db.db(process.env.MONGO_DB).collection("transactions");
     const abandoned = await db.db(process.env.MONGO_DB).collection("abandoned");
 
-
     if (req.method == "POST") {
       const data = req.body;
       console.log(data);
 
-      abandoned.deleteMany({ "buyerVO.email": data.email });
+      await abandoned.deleteMany({ "buyerVO.email": data.email });
 
       const query = { email: data.email, prod: data.prod };
       const t = await transactions.findOne(query);

@@ -52,7 +52,6 @@ export default function Abandonou(props) {
 
     const handleChange = (prop) => (event) => {
         setObs(event.target.value)
-        selected[prop] = event.target.value
     }
 
     const handleClickOpen = (transaction) => {
@@ -61,14 +60,15 @@ export default function Abandonou(props) {
         setOpen(true);
     };
 
+    const removeFromList = (transaction) => {
+        setAbandoned(abandoned.filter(item => item !== transaction))
+    }
+
     const handleDelete = async (transaction) => {
         if (window.confirm("Tem certeza que quer deletar?")) {
-            setSelected(transaction)
-
             const res = await post(transaction, 'DELETE')
             console.log(res)
-
-            setAbandoned(await list())
+            removeFromList(transaction)
         }
     }
 
@@ -79,10 +79,11 @@ export default function Abandonou(props) {
     const onSubmit = async (e) => {
         e.preventDefault()
 
-        const res = await post(selected)
-        console.log(res)
-
+        selected['obs'] = obs
         setOpen(false)
+
+        const res = post(selected)
+        console.log(res)
     }
 
     return (
@@ -141,16 +142,15 @@ export default function Abandonou(props) {
                                 <TableCell>Email</TableCell>
                                 <TableCell>Verificar</TableCell>
                                 <TableCell>Whats</TableCell>
-                                <TableCell>Checkout</TableCell>
+                                <TableCell>Delete</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {props.abandoned.map((transaction) => {
+                            {abandoned.map((transaction) => {
 
                                 const firstName = transaction.buyerVO.name.split(' ')[0];
                                 const text = `Oi ${firstName}. Tudo bem? %0aEu sou Alexandre da equipe da Mari Ubialli. %0aNós ficamos muito felizes que tenha se interessado pelo *${transaction.productName}*. /abandonou`;
-                                const checkoutId = transaction.productName == "Curso Bonecas Joias Raras" ? "B46628840G" : "D49033705A";
-                                const checkoutUrl = `https://pay.hotmart.com/${checkoutId}?checkoutMode=10&email=${transaction.buyerVO.email}&name=${transaction.buyerVO.name}`;
+                                
                                 const hoje = new Date().getTime()
                                 let begin = new Date()
                                 begin.setDate(new Date().getDate()-7)
@@ -169,7 +169,6 @@ export default function Abandonou(props) {
                                                 <a href={`http://wa.me/55${transaction.buyerVO.phone}?text=${text}`} target="_blank">Whats</a>
                                             }
                                         </TableCell>
-                                        <TableCell><a href={checkoutUrl} target="_blank">Checkout</a></TableCell>
                                         <TableCell><a href="#" onClick={(e) => { e.preventDefault(); handleDelete(transaction); }}>Delete</a></TableCell>
                                     </TableRow>
                                 )

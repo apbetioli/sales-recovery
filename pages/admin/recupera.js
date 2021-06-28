@@ -225,7 +225,7 @@ export default function Recupera(props) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {props.transactions.map((transaction, index) => {
+                            {transactions.map((transaction, index) => {
 
                                 if (transaction.archived && !showArchived)
                                     return <TableRow key={transaction._id}></TableRow>
