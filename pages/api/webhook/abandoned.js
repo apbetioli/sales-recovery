@@ -10,6 +10,8 @@ module.exports = async (req, res) => {
       if (!data.date)
         data.date = new Date().toISOString();
 
+      delete data._id;
+
       const query = { "buyerVO.email": data.buyerVO.email };
       const doc = { $set: data }
       const options = { upsert: true };

@@ -106,7 +106,6 @@ export default function Abandonou(props) {
                             type="text"
                             placeholder="..."
                             fullWidth
-                            required
                             margin="normal"
                             InputLabelProps={{
                                 shrink: true,
