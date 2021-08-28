@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
     const abandoned = await db.db(process.env.MONGO_DB).collection("abandoned");
     const data = req.body;
 
-    if (data.hottok != process.env.HOTTOK)
+    if (process.env.HOTTOK && data.hottok != process.env.HOTTOK)
       throw "Invalid HOTTOK"
 
     if (req.method == "POST") {

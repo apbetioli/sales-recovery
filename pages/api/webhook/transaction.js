@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
       const data = req.body;
       console.log(data);
 
-      if (data.hottok != process.env.HOTTOK)
+      if (process.env.HOTTOK && data.hottok != process.env.HOTTOK)
         throw "Invalid HOTTOK"
 
       await abandoned.deleteMany({ "buyerVO.email": data.email });
@@ -38,8 +38,8 @@ module.exports = async (req, res) => {
       const data = req.body;
       console.log(data);
 
-      if (data.hottok != process.env.HOTTOK)
-      throw "Invalid HOTTOK"
+      if (process.env.HOTTOK && data.hottok != process.env.HOTTOK)
+        throw "Invalid HOTTOK"
 
       const query = { email: data.email, prod: data.prod };
       const t = await transactions.deleteOne(query);
