@@ -1,4 +1,14 @@
 import client from "../../../lib/db";
+import ks from "../../../lib/klicksend";
+
+const statusTag = {
+  '1': 'AC_BOLETOU',
+  '2': 'AC_COMPROU',
+  '3': 'AC_CANCELADA',
+  '10': 'AC_EXPIROU',
+  '7': 'AC_REEMBOLSADA',
+  '11': 'AC_EM_RECUPERACAO',
+}
 
 module.exports = async (req, res) => {
   try {
@@ -14,8 +24,17 @@ module.exports = async (req, res) => {
       const doc = { $set: data }
       const options = { upsert: true };
       const upserted = await transactions.updateOne(query, doc, options);
-      res.send(upserted);
 
+      const lead = {
+        email: data.cus_email,
+        name: data.cus_name,
+        phone: data.cus_cel,
+        tag: statusTag['' + data.trans_status]
+      }
+
+      console.log(await ks(lead))
+
+      res.send(upserted);
 
     } else if (req.method == "DELETE") {
 
