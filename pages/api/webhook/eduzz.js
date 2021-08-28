@@ -19,11 +19,7 @@ module.exports = async (req, res) => {
       const data = req.body;
       console.log(data);
 
-      const query = { cus_email: data.cus_email, product_cod: data.product_cod };
-
-      const doc = { $set: data }
-      const options = { upsert: true };
-      const upserted = await transactions.updateOne(query, doc, options);
+      const inserted = await transactions.insertOne(doc);
 
       const lead = {
         email: data.cus_email,
@@ -34,17 +30,7 @@ module.exports = async (req, res) => {
 
       console.log(await ks(lead))
 
-      res.send(upserted);
-
-    } else if (req.method == "DELETE") {
-
-      const data = req.body;
-      console.log(data);
-
-      const query = { cus_email: data.cus_email, product_cod: data.product_cod };
-      const t = await transactions.deleteOne(query);
-
-      res.send(t);
+      res.send(inserted);
 
     } else {
       const cursor = transactions.find({}, { "sort": { "trans_createdate": -1 } });
