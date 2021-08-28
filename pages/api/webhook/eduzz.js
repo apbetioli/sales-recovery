@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
       if (process.env.EDUZZ_API_KEY && data.api_key != process.env.EDUZZ_API_KEY)
         throw "Invalid API KEY"
 
-      const inserted = await transactions.insertOne(doc);
+      const inserted = await transactions.insertOne(data);
 
       const lead = {
         email: data.cus_email,
