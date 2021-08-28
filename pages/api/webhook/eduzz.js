@@ -3,8 +3,8 @@ import ks from "../../../lib/klicksend";
 
 const statusTag = {
   '1': 'AC_BOLETOU',
-  '2': 'AC_COMPROU',
-  '3': 'AC_CANCELADA',
+  '3': 'AC_COMPROU',
+  '4': 'AC_CANCELADA',
   '10': 'AC_EXPIROU',
   '7': 'AC_REEMBOLSADA',
   '11': 'AC_EM_RECUPERACAO',
