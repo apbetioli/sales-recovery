@@ -19,9 +19,8 @@ module.exports = async (req, res) => {
       const data = req.body;
       console.log(data);
 
-      if (data.api_key != process.env.EDUZZ_API_KEY) {
+      if (data.api_key != process.env.EDUZZ_API_KEY)
         throw "Invalid API KEY"
-      }
 
       const inserted = await transactions.insertOne(doc);
 
