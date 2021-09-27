@@ -230,8 +230,8 @@ export default function Recupera(props) {
                                 if (transaction.archived && !showArchived)
                                     return <TableRow key={transaction._id}></TableRow>
 
-                                const oi = `Oi ${transaction.first_name}. Tudo bem? %0aAqui é o Alexandre. `;
-                                const intro = `${oi}Sou da equipe da Mari Ubialli. %0aNós ficamos muito felizes que tenha se interessado pelo *${transaction.prod_name}*. `;
+                                const oi = `Oi ${transaction.first_name}. Tudo bem? Aqui é o Alexandre. `;
+                                const intro = `${oi}Sou da equipe da Mari Ubialli. %0aRecebemos sua inscrição no *${transaction.prod_name}*. `;
 
                                 const hoje = new Date(new Date().toDateString())
                                 const end = hoje.getTime()
@@ -273,8 +273,12 @@ export default function Recupera(props) {
                                     }
                                     case 4: {
                                         rowStyle = classes.phase4;
-                                        currentPhaseText = `${intro}%0aQualquer dúvida pode contar comigo :)`; 
-                                        currentPhaseLabel = "Apresentação";
+                                        currentPhaseText = `${intro}%0aAssim que o pagamento for confirmado, o acesso ao curso será liberado. %0aVocê receberá todos os dados de acesso no seu e-mail.`; 
+                                        currentPhaseText += `%0a%0aPara imprimir seu boleto é só acessar o link:%0a${transaction.billet_url}`; 
+                                        currentPhaseText += `%0a%0aSe preferir, você também pode usar a linha digitável para pagar online:%0a${transaction.billet_barcode}`;
+                                        currentPhaseText += `%0a%0aPS: Atente-se à data de vencimento do boleto.`; 
+                                        currentPhaseText += `%0aQualquer dúvida pode contar comigo :)`; 
+                                        currentPhaseLabel = "Boletou";
                                         break;
                                     }
                                 }
